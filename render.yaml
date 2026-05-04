@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: jenq-erp-backend
+    env: node
+    region: oregon
+    buildCommand: cd server && npm install
+    startCommand: cd server && npm start
+    envVars:
+      - key: PORT
+        value: 3003
+      - key: NODE_ENV
+        value: production
+      - key: FRONTEND_URL
+        value: https://jenq-erp-frontend.onrender.com
+
+  - type: web
+    name: jenq-erp-frontend
+    env: static
+    region: oregon
+    buildCommand: cd client && npm install && npm run build
+    startCommand: npx serve -s dist -l 5173
+    envVars:
+      - key: VITE_API_URL
+        value: https://jenq-erp-backend.onrender.com
+      - key: VITE_APP_URL
+        value: https://jenq-erp-frontend.onrender.com
+    routes:
+      - source: /
+        destination: /index.html
+      - source: /(.*)
+        destination: /$1
