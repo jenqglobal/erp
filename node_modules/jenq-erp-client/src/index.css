@@ -339,4 +339,83 @@
   .backface-hidden {
     backface-visibility: hidden;
   }
+
+  /* Mobile responsive utilities */
+  .mobile-hidden {
+    @apply hidden;
+  }
+  
+  @media (min-width: 768px) {
+    .mobile-hidden {
+      @apply block;
+    }
+  }
+
+  .mobile-only {
+    @apply block;
+  }
+  
+  @media (min-width: 768px) {
+    .mobile-only {
+      @apply hidden;
+    }
+  }
+}
+
+/* Mobile specific fixes */
+@media (max-width: 767px) {
+  /* Touch-friendly tap targets */
+  button, a, .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Prevent horizontal scroll */
+  body {
+    overflow-x: hidden;
+  }
+  
+  /* Better table scrolling on mobile */
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Mobile-safe inputs */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+  
+  /* Prevent zoom on iOS */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  select,
+  textarea {
+    font-size: 16px;
+  }
+  
+  /* Better spacing on mobile */
+  .mobile-p-2 {
+    padding: 0.5rem;
+  }
+  
+  .mobile-mb-2 {
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Full width on mobile */
+  .mobile-w-full {
+    width: 100%;
+  }
+  
+  /* Stack on mobile */
+  .mobile-flex-col {
+    flex-direction: column;
+  }
+  
+  .mobile-grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
 }

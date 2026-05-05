@@ -207,15 +207,108 @@ const Landing = () => {
           <div className="mt-16 relative">
             <div className={`relative rounded-2xl overflow-hidden shadow-2xl border-4 ${
               isDark ? 'border-slate-700' : 'border-slate-200'
-            }`}>
-              <img 
-                src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=600&fit=crop" 
-                alt="ERP Dashboard Preview"
-                className="w-full h-auto object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            } bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900`}>
+              <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-transparent to-accent-500/10"></div>
+              
+              <div className="relative z-10 p-6 lg:p-8">
+                <div className="grid lg:grid-cols-2 gap-8 items-center">
+                  {/* Left - Dashboard Preview */}
+                  <div className="space-y-4">
+                    <div className={`rounded-xl p-4 ${isDark ? 'bg-slate-800/80' : 'bg-white'} border ${isDark ? 'border-slate-700' : 'border-slate-200'} shadow-lg`}>
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span className={`text-xs ml-2 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Dashboard</span>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex gap-2">
+                          <div className="h-20 flex-1 rounded-lg bg-gradient-to-r from-primary-500/20 to-primary-600/20 border border-primary-500/30 flex items-end justify-center pb-2">
+                            <div className="w-8 bg-primary-500 rounded-t"></div>
+                          </div>
+                          <div className="h-20 flex-1 rounded-lg bg-gradient-to-r from-accent-500/20 to-accent-600/20 border border-accent-500/30 flex items-end justify-center pb-2">
+                            <div className="w-12 bg-accent-500 rounded-t"></div>
+                          </div>
+                          <div className="h-20 flex-1 rounded-lg bg-gradient-to-r from-premium-platinum/20 to-indigo-500/20 border border-indigo-500/30 flex items-end justify-center pb-2">
+                            <div className="w-6 bg-indigo-500 rounded-t"></div>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                          <div className={`p-2 rounded-lg ${isDark ? 'bg-slate-700/50' : 'bg-slate-100'} text-center`}>
+                            <div className={`text-lg font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>$42K</div>
+                            <div className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Revenue</div>
+                          </div>
+                          <div className={`p-2 rounded-lg ${isDark ? 'bg-slate-700/50' : 'bg-slate-100'} text-center`}>
+                            <div className={`text-lg font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>156</div>
+                            <div className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Orders</div>
+                          </div>
+                          <div className={`p-2 rounded-lg ${isDark ? 'bg-slate-700/50' : 'bg-slate-100'} text-center`}>
+                            <div className={`text-lg font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>89%</div>
+                            <div className={`text-[10px] ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Growth</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Right - Professional Character */}
+                  <div className="flex items-center justify-center lg:justify-end">
+                    <div className="relative">
+                      <svg width="280" height="320" viewBox="0 0 280 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                          <linearGradient id="charGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#6366f1"/>
+                            <stop offset="100%" stopColor="#8b5cf6"/>
+                          </linearGradient>
+                          <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#f59e0b"/>
+                            <stop offset="100%" stopColor="#ec4899"/>
+                          </linearGradient>
+                        </defs>
+                        {/* Circle BG */}
+                        <circle cx="140" cy="140" r="120" fill="url(#charGradient)" opacity="0.15"/>
+                        {/* Body */}
+                        <ellipse cx="140" cy="230" rx="60" ry="70" fill="url(#charGradient)"/>
+                        {/* Head */}
+                        <circle cx="140" cy="110" r="50" fill="url(#charGradient)"/>
+                        {/* Face */}
+                        <circle cx="125" cy="100" r="6" fill="#1e293b"/>
+                        <circle cx="155" cy="100" r="6" fill="#1e293b"/>
+                        <path d="M130 120 Q140 130 150 120" stroke="#1e293b" strokeWidth="3" fill="none"/>
+                        {/* Hair */}
+                        <path d="M90 90 Q100 60 140 55 Q180 60 190 90 Q180 70 140 65 Q100 70 90 90" fill="#1e293b"/>
+                        {/* Suit */}
+                        <path d="M85 180 Q90 280 100 300 L180 300 Q190 280 195 180 L170 160 L140 170 L110 160 Z" fill="#1e293b"/>
+                        <path d="M130 170 L140 220 L150 170" fill="#6366f1"/>
+                        <path d="M135 175 L140 200 L145 175" fill="white"/>
+                        {/* Tie */}
+                        <path d="M140 170 L135 210 L140 240 L145 210 Z" fill="url(#accentGradient)"/>
+                        {/* Arms */}
+                        <ellipse cx="80" cy="200" rx="20" ry="40" fill="url(#charGradient)"/>
+                        <ellipse cx="200" cy="200" rx="20" ry="40" fill="url(#charGradient)"/>
+                        {/* Hands */}
+                        <circle cx="80" cy="240" r="15" fill="#fcd34d"/>
+                        <circle cx="200" cy="240" r="15" fill="#fcd34d"/>
+                        {/* Holding tablet */}
+                        <rect x="105" y="220" width="70" height="50" rx="5" fill="#1e293b"/>
+                        <rect x="110" y="225" width="60" height="40" rx="3" fill="#6366f1"/>
+                        <rect x="115" y="230" width="20" height="15" rx="2" fill="white" opacity="0.8"/>
+                        <rect x="140" y="230" width="25" height="8" rx="2" fill="white" opacity="0.6"/>
+                        <rect x="140" y="242" width="25" height="5" rx="2" fill="white" opacity="0.6"/>
+                        {/* Floating elements */}
+                        <circle cx="70" cy="80" r="8" fill="#6366f1" opacity="0.6"/>
+                        <circle cx="220" cy="60" r="12" fill="#f59e0b" opacity="0.6"/>
+                        <circle cx="240" cy="150" r="6" fill="#ec4899" opacity="0.6"/>
+                        <circle cx="50" cy="160" r="10" fill="#6366f1" opacity="0.4"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black/60 to-transparent"></div>
               <div className="absolute bottom-6 left-6 right-6">
-                <p className="text-white text-sm font-medium">Real-time analytics dashboard with AI insights</p>
+                <p className="text-white/90 text-sm font-medium">Trusted by 10,000+ businesses worldwide</p>
               </div>
             </div>
             <div className={`absolute -bottom-6 -right-6 w-24 h-24 rounded-2xl shadow-xl ${
