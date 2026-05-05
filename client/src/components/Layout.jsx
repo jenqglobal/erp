@@ -211,7 +211,7 @@ const menuConfig = [
   }
 ];
 
-export const Sidebar = ({ collapsed, onToggle }) => {
+export const Sidebar = ({ collapsed, onToggle, isMobileOpen, onMobileClose }) => {
   const location = useLocation();
   const { user, organization } = useAuth();
   const { isDark, toggleTheme } = useTheme();
@@ -238,14 +238,23 @@ export const Sidebar = ({ collapsed, onToggle }) => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <aside 
-      ref={sidebarRef}
-      className={`fixed left-0 top-0 h-full z-40 flex flex-col ${
-        isDark 
-          ? 'bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border-r border-slate-800' 
-          : 'bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900'
-      } ${collapsed ? 'w-16' : 'w-64'} transition-all duration-300`}
-    >
+    <>
+      {/* Mobile Overlay */}
+      {isMobileOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          onClick={onMobileClose}
+        />
+      )}
+      <aside 
+        ref={sidebarRef}
+        className={`fixed left-0 top-0 h-full z-40 flex flex-col ${
+          isDark 
+            ? 'bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 border-r border-slate-800' 
+            : 'bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900'
+        } ${collapsed ? 'w-16' : 'w-64'} transition-all duration-300 
+        ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
+      >
       <div className="h-16 flex items-center px-3 border-b border-slate-700/50">
         {!collapsed && (
           <div className="flex items-center gap-2 w-full">
@@ -391,10 +400,10 @@ export const Sidebar = ({ collapsed, onToggle }) => {
         )}
       </div>
     </aside>
+    </>
   );
 };
-
-export const Header = () => {
+export const Header = ({ onMobileMenuToggle, isMobileMenuOpen }) => {
   const navigate = useNavigate();
   const { user, organization, logout } = useAuth();
   const { isDark, toggleTheme, currency, setCurrencyCode, currencies } = useTheme();
@@ -494,13 +503,20 @@ export const Header = () => {
   };
 
   return (
-    <header className={`h-16 backdrop-blur-xl transition-colors duration-300 flex items-center justify-between px-6 sticky top-0 z-30 ${
+    <header className={`h-16 backdrop-blur-xl transition-colors duration-300 flex items-center justify-between px-4 md:px-6 sticky top-0 z-30 ${
       isDark 
         ? 'bg-slate-900/80 border-slate-800' 
         : 'bg-white/80 border-slate-200'
     } border-b`}>
-      <div className="flex items-center gap-4">
-        <div className="relative w-80" ref={searchRef}>
+      <div className="flex items-center gap-2 md:gap-4">
+        {/* Mobile Menu Button */}
+        <button 
+          onClick={onMobileMenuToggle}
+          className="md:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+        >
+          <Menu size={24} />
+        </button>
+        <div className="relative w-48 md:w-80" ref={searchRef}>
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             ref={inputRef}
@@ -774,15 +790,25 @@ export const Header = () => {
 
 export const Layout = ({ children, sidebarCollapsed, onToggleSidebar }) => {
   const { isDark } = useTheme();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const marginClass = sidebarCollapsed ? 'md:ml-16' : 'md:ml-64';
   
   return (
     <div className={`min-h-screen transition-colors duration-300 ${
       isDark ? 'bg-slate-950' : 'bg-slate-50'
     } bg-pattern`}>
-      <Sidebar collapsed={sidebarCollapsed} onToggle={onToggleSidebar} />
-      <div className={`transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
-        <Header />
-        <main className="p-6">
+      <Sidebar 
+        collapsed={sidebarCollapsed} 
+        onToggle={onToggleSidebar} 
+        isMobileOpen={mobileMenuOpen}
+        onMobileClose={() => setMobileMenuOpen(false)}
+      />
+      <div className={`transition-all duration-300 ml-0 ${marginClass}`}>
+        <Header 
+          onMobileMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)}
+          isMobileMenuOpen={mobileMenuOpen}
+        />
+        <main className="p-4 md:p-6">
           {children}
         </main>
       </div>
