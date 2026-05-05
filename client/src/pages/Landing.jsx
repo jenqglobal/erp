@@ -517,7 +517,7 @@ const Landing = () => {
               <a href="#" className="hover:text-white transition-colors">Contact</a>
               <a href="#" className="hover:text-white transition-colors">Documentation</a>
             </div>
-            <p className="text-sm text-slate-400">2024 JenQ ERP. All rights reserved.</p>
+            <p className="text-sm text-slate-400">2026 JenQ ERP. All rights reserved.</p>
           </div>
         </div>
       </footer>
