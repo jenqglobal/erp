@@ -21,16 +21,6 @@ const Dashboard = () => {
   const [section, setSection] = useState(getSection());
   const [timeRange, setTimeRange] = useState('month');
   const [loading, setLoading] = useState(true);
-  const [widgetToggles, setWidgetToggles] = useState({
-    revenueChart: true,
-    topDeals: true,
-    recentActivity: true,
-    pipelineOverview: true,
-    teamPerformance: false,
-    goalProgress: false,
-    taskSummary: false,
-    notifications: true,
-  });
   const [stats, setStats] = useState({
     revenue: 0,
     revenueChange: 0,
@@ -136,13 +126,6 @@ const Dashboard = () => {
     if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
     if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
     return date.toLocaleDateString();
-  };
-
-  const toggleWidget = (widget) => {
-    setWidgetToggles(prev => ({
-      ...prev,
-      [widget]: !prev[widget]
-    }));
   };
 
   const getDefaultRevenueData = () => [
@@ -452,22 +435,19 @@ const Dashboard = () => {
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
-                { name: 'Revenue Chart', key: 'revenueChart' },
-                { name: 'Top Deals', key: 'topDeals' },
-                { name: 'Recent Activity', key: 'recentActivity' },
-                { name: 'Pipeline Overview', key: 'pipelineOverview' },
-                { name: 'Team Performance', key: 'teamPerformance' },
-                { name: 'Goal Progress', key: 'goalProgress' },
-                { name: 'Task Summary', key: 'taskSummary' },
-                { name: 'Notifications', key: 'notifications' },
+                { name: 'Revenue Chart', enabled: true },
+                { name: 'Top Deals', enabled: true },
+                { name: 'Recent Activity', enabled: true },
+                { name: 'Pipeline Overview', enabled: true },
+                { name: 'Team Performance', enabled: false },
+                { name: 'Goal Progress', enabled: false },
+                { name: 'Task Summary', enabled: false },
+                { name: 'Notifications', enabled: true },
               ].map((widget, idx) => (
                 <div key={idx} className={`flex items-center justify-between p-4 rounded-lg border ${isDark ? 'border-slate-700 bg-slate-800' : 'border-slate-200 bg-slate-50'}`}>
                   <span className={isDark ? 'text-white' : 'text-slate-700'}>{widget.name}</span>
-                  <button 
-                    onClick={() => toggleWidget(widget.key)}
-                    className={`w-12 h-6 rounded-full transition-colors ${widgetToggles[widget.key] ? 'bg-primary-500' : 'bg-slate-300'}`}
-                  >
-                    <div className={`w-5 h-5 rounded-full bg-white transition-transform ${widgetToggles[widget.key] ? 'translate-x-6' : 'translate-x-0.5'}`} />
+                  <button className={`w-12 h-6 rounded-full transition-colors ${widget.enabled ? 'bg-primary-500' : 'bg-slate-300'}`}>
+                    <div className={`w-5 h-5 rounded-full bg-white transition-transform ${widget.enabled ? 'translate-x-6' : 'translate-x-0.5'}`} />
                   </button>
                 </div>
               ))}
