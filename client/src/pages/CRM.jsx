@@ -4,7 +4,7 @@ import {
   Plus, Search, Edit2, Trash2, Mail, Phone, Building, Users, DollarSign, 
   Target, TrendingUp, Filter, Download, MoreHorizontal, X, 
   ArrowRight, Sparkles, CheckCircle, AlertCircle, Clock,
-  Package, CreditCard, User, Calendar, FileText
+  Package, CreditCard, User, Calendar, FileText, BarChart3
 } from 'lucide-react';
 import { crmService } from '../services/api';
 import { useTheme } from '../store/ThemeContext';
@@ -22,6 +22,8 @@ const CRM = () => {
     { key: 'deals', label: 'Deals', icon: DollarSign },
     { key: 'contacts', label: 'Contacts', icon: Phone },
     { key: 'companies', label: 'Companies', icon: Building },
+    { key: 'accounts', label: 'Accounts', icon: CreditCard },
+    { key: 'analytics', label: 'Analytics', icon: BarChart3 },
   ];
   
   const getInitialTab = () => {
@@ -29,6 +31,8 @@ const CRM = () => {
     if (path.includes('/deals')) return 'deals';
     if (path.includes('/contacts')) return 'contacts';
     if (path.includes('/companies')) return 'companies';
+    if (path.includes('/accounts')) return 'accounts';
+    if (path.includes('/analytics')) return 'analytics';
     return 'pipeline';
   };
   
@@ -37,6 +41,18 @@ const CRM = () => {
   const [contacts, setContacts] = useState([]);
   const [deals, setDeals] = useState([]);
   const [companies, setCompanies] = useState([]);
+  const [accounts, setAccounts] = useState([]);
+  const [analytics, setAnalytics] = useState({
+    totalRevenue: 0,
+    totalDeals: 0,
+    wonDeals: 0,
+    conversionRate: 0,
+    pipelineValue: 0,
+    avgDealSize: 0,
+    leadsByStatus: [],
+    dealsByStage: [],
+    monthlyTrends: []
+  });
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   
@@ -262,6 +278,24 @@ const CRM = () => {
     { key: 'negotiation', label: 'Negotiation', color: 'indigo' },
     { key: 'closed_won', label: 'Closed Won', color: 'green' },
     { key: 'closed_lost', label: 'Closed Lost', color: 'red' }
+  ];
+
+  const dealsByStageData = stageColumns.map(stage => {
+    const count = deals.filter(d => d.stage === stage.key).length;
+    return {
+      name: stage.label,
+      count,
+      color: stage.color,
+      percentage: deals.length > 0 ? Math.round((count / deals.length) * 100) : 0
+    };
+  });
+
+  const leadSourceData = [
+    { name: 'Website', count: leads.filter(l => l.source === 'Website').length, color: 'primary' },
+    { name: 'Referral', count: leads.filter(l => l.source === 'Referral').length, color: 'accent' },
+    { name: 'Social', count: leads.filter(l => l.source === 'Social').length, color: 'indigo' },
+    { name: 'Email', count: leads.filter(l => l.source === 'Email').length, color: 'green' },
+    { name: 'Other', count: leads.filter(l => l.source !== 'Website' && l.source !== 'Referral' && l.source !== 'Social' && l.source !== 'Email').length, color: 'slate' },
   ];
 
   const totalValue = deals.reduce((sum, d) => sum + (d.value || 0), 0);
@@ -564,6 +598,143 @@ const CRM = () => {
                   ))}
                 </tbody>
               </table>
+            </div>
+          </div>
+        )}
+
+        {/* Accounts Table */}
+        {activeTab === 'accounts' && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className={`p-4 rounded-xl border ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'}`}>
+                <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Total Accounts</p>
+                <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{accounts.length}</p>
+              </div>
+              <div className={`p-4 rounded-xl border ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'}`}>
+                <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Active</p>
+                <p className="text-2xl font-bold text-green-500">{accounts.filter(a => a.status === 'active').length}</p>
+              </div>
+              <div className={`p-4 rounded-xl border ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'}`}>
+                <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Total Revenue</p>
+                <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>${accounts.reduce((sum, a) => sum + (a.revenue || 0), 0).toLocaleString()}</p>
+              </div>
+              <div className={`p-4 rounded-xl border ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'}`}>
+                <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Avg. Account Value</p>
+                <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>${accounts.length > 0 ? Math.round(accounts.reduce((sum, a) => sum + (a.revenue || 0), 0) / accounts.length).toLocaleString() : 0}</p>
+              </div>
+            </div>
+            <div className={`rounded-xl border ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'}`}>
+              <div className="p-4 border-b border-slate-700 flex justify-between items-center">
+                <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>Customer Accounts</h3>
+                <button onClick={() => openModal('account', null)} className="flex items-center gap-2 px-3 py-2 bg-primary-500 text-white rounded-lg text-sm">
+                  <Plus size={16} /> Add Account
+                </button>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className={isDark ? 'bg-slate-800' : 'bg-slate-50'}>
+                    <tr>
+                      <th className={`px-4 py-3 text-left ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Company</th>
+                      <th className={`px-4 py-3 text-left ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Contact</th>
+                      <th className={`px-4 py-3 text-left ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Email</th>
+                      <th className={`px-4 py-3 text-left ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Revenue</th>
+                      <th className={`px-4 py-3 text-left ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Status</th>
+                      <th className={`px-4 py-3 text-left ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-700">
+                    {accounts.length === 0 ? (
+                      <tr><td colSpan={6} className="px-4 py-8 text-center text-slate-500">No accounts yet. Add your first account.</td></tr>
+                    ) : (
+                      accounts.map(account => (
+                        <tr key={account.id} className={isDark ? 'hover:bg-slate-800/50' : 'hover:bg-slate-50'}>
+                          <td className="px-4 py-3 font-medium">{account.company}</td>
+                          <td className="px-4 py-3">{account.contact}</td>
+                          <td className="px-4 py-3">{account.email}</td>
+                          <td className="px-4 py-3">${(account.revenue || 0).toLocaleString()}</td>
+                          <td className="px-4 py-3">
+                            <span className={`px-2 py-1 rounded text-xs ${account.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-700'}`}>
+                              {account.status || 'active'}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3">
+                            <button onClick={() => openModal('account', account)} className={`p-1 rounded ${isDark ? 'hover:bg-slate-700' : 'hover:bg-slate-100'}`}>
+                              <Edit2 size={14} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Analytics Tab */}
+        {activeTab === 'analytics' && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              <div className={`p-4 rounded-xl border ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'}`}>
+                <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Total Revenue</p>
+                <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>${analytics.totalRevenue.toLocaleString()}</p>
+              </div>
+              <div className={`p-4 rounded-xl border ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'}`}>
+                <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Total Deals</p>
+                <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{analytics.totalDeals}</p>
+              </div>
+              <div className={`p-4 rounded-xl border ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'}`}>
+                <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Won Deals</p>
+                <p className="text-2xl font-bold text-green-500">{analytics.wonDeals}</p>
+              </div>
+              <div className={`p-4 rounded-xl border ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'}`}>
+                <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Conversion Rate</p>
+                <p className="text-2xl font-bold text-primary-500">{analytics.conversionRate}%</p>
+              </div>
+              <div className={`p-4 rounded-xl border ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'}`}>
+                <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Pipeline Value</p>
+                <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>${analytics.pipelineValue.toLocaleString()}</p>
+              </div>
+              <div className={`p-4 rounded-xl border ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'}`}>
+                <p className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Avg Deal Size</p>
+                <p className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>${analytics.avgDealSize.toLocaleString()}</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className={`p-6 rounded-xl border ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'}`}>
+                <h3 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-slate-900'}`}>Deals by Stage</h3>
+                <div className="space-y-3">
+                  {dealsByStageData.map(stage => (
+                    <div key={stage.name} className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-3 h-3 rounded-full bg-${stage.color}-500`}></div>
+                        <span className={isDark ? 'text-slate-300' : 'text-slate-700'}>{stage.name}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className={`w-32 h-2 rounded-full ${isDark ? 'bg-slate-700' : 'bg-slate-200'}`}>
+                          <div className={`h-2 rounded-full bg-${stage.color}-500`} style={{ width: `${stage.percentage}%` }}></div>
+                        </div>
+                        <span className={`text-sm ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>{stage.count}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className={`p-6 rounded-xl border ${isDark ? 'bg-slate-900 border-slate-700' : 'bg-white border-slate-200'}`}>
+                <h3 className={`font-semibold mb-4 ${isDark ? 'text-white' : 'text-slate-900'}`}>Lead Sources</h3>
+                <div className="space-y-3">
+                  {leadSourceData.map(source => (
+                    <div key={source.name} className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-3 h-3 rounded-full bg-${source.color}-500`}></div>
+                        <span className={isDark ? 'text-slate-300' : 'text-slate-700'}>{source.name}</span>
+                      </div>
+                      <span className={`text-sm font-medium ${isDark ? 'text-white' : 'text-slate-900'}`}>{source.count}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         )}
